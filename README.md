@@ -12,4 +12,4 @@ Then you can run
 
 > python serve.py
 
-to start a local webserver that will serve the game page on localhost. 
+to start a local webserver that will serve the game page on localhost (requires Python 3). 
