@@ -49,7 +49,7 @@ var command_queue: Array[MovementCommand] = []
 			rotation = (1.0 - blend_value) * startRot + blend_value * endRot
 
 func coord_to_position(c: Vector2i) -> Vector3:
-	return Vector3(c.x * 2 + 0.5, position.y, c.y * 2 + 0.5)
+	return Vector3(c.x * 2, position.y, c.y * 2)
 	
 func dir_to_rotation(c: Vector2i) -> Vector3:
 	if c.y == -1:

@@ -57,7 +57,8 @@ _data = {
 script = ExtResource("1_mx6dn")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.413, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.413, 0.505189)
+fov = 90.4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
