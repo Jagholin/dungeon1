@@ -19,6 +19,9 @@ const WALKING_STATE := "WALKING"
 const TURNING_STATE := "TURNING"
 var movement_state := IDLE_STATE
 
+enum MovementCommand { LEFT_COMMAND, RIGHT_COMMAND, FORWARD_COMMAND, BACK_COMMAND, STRAFE_LEFT_COMMAND, STRAFE_RIGHT_COMMAND }
+var command_queue: Array[MovementCommand] = []
+
 ## this property is driven by the AnimationPlayer
 ## the starting value is always 0.0, the end value is 1.0 and indicates animation end
 ##
@@ -70,34 +73,57 @@ func apply_direction():
 	blend_value = 0.0
 	movement_state = TURNING_STATE
 	animation_player.play(turn_animation_name)
-
-func _input(event):
-	## for now, we ignore any movement commands if we are in the middle of an animation
-	## TODO: implement command queue
+	
+func _ready():
+	# sync position and rotation to the current coordinates
+	position = coord_to_position(coordinates)
+	rotation = dir_to_rotation(direction)
+	
+func _input(_event):
+	# limit command queue to 1 command
+	if command_queue.size() >= 1:
+		return
+	if Input.is_action_just_pressed("forward"):
+		command_queue.push_back(MovementCommand.FORWARD_COMMAND)
+	if Input.is_action_just_pressed("backward"):
+		command_queue.push_back(MovementCommand.BACK_COMMAND)
+	if Input.is_action_just_pressed("left"):
+		command_queue.push_back(MovementCommand.LEFT_COMMAND)
+	if Input.is_action_just_pressed("right"):
+		command_queue.push_back(MovementCommand.RIGHT_COMMAND)
+	if Input.is_action_just_pressed("strafe_left"):
+		command_queue.push_back(MovementCommand.STRAFE_LEFT_COMMAND)
+	if Input.is_action_just_pressed("strafe_right"):
+		command_queue.push_back(MovementCommand.STRAFE_RIGHT_COMMAND)
+	
+func _process(_delta):
 	if movement_state != IDLE_STATE:
 		return
+	if command_queue.is_empty():
+		return
+	var next_command := command_queue.pop_front() as MovementCommand
 
 	var destination: Vector2i
 	var newDirection: Vector2i = direction
 	var isDirectionChange = false
 	var isDestinationChange = false
-	if Input.is_action_just_pressed("forward"):
+	if next_command == MovementCommand.FORWARD_COMMAND:
 		destination = coordinates + direction
 		isDestinationChange = true
-	if Input.is_action_just_pressed("backward"):
+	if next_command == MovementCommand.BACK_COMMAND:
 		destination = coordinates - direction
 		isDestinationChange = true
-	if Input.is_action_just_pressed("left"):
+	if next_command == MovementCommand.LEFT_COMMAND:
 		newDirection = Vector2i(direction.y, -direction.x)
 		isDirectionChange = true
-	if Input.is_action_just_pressed("right"):
+	if next_command == MovementCommand.RIGHT_COMMAND:
 		newDirection = Vector2i(-direction.y, direction.x)
 		isDirectionChange = true
-	if Input.is_action_just_pressed("strafe_left"):
+	if next_command == MovementCommand.STRAFE_LEFT_COMMAND:
 		var myDirection := Vector2i(direction.y, -direction.x)
 		destination = coordinates + myDirection
 		isDestinationChange = true
-	if Input.is_action_just_pressed("strafe_right"):
+	if next_command == MovementCommand.STRAFE_RIGHT_COMMAND:
 		var myDirection := Vector2i(-direction.y, direction.x)
 		destination = coordinates + myDirection
 		isDestinationChange = true
@@ -111,9 +137,6 @@ func _input(event):
 			return
 		new_coordinates = destination
 		apply_coordinates()
-	
-func _process(delta):
-	pass
 
 func _on_animation_player_animation_finished(anim_name):
 	if anim_name == walk_animation_name:
