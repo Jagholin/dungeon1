@@ -2,6 +2,7 @@ class_name CharacterController
 extends Node3D
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var step_sound_player: AudioStreamPlayer = $StepSoundsPlayer
 
 var wall_tester: Level
 var coordinates: Vector2i = Vector2i.ZERO
@@ -26,9 +27,9 @@ var command_queue: Array[MovementCommand] = []
 ## the starting value is always 0.0, the end value is 1.0 and indicates animation end
 ##
 ## TODO: rewrite using Transform3D ?
-@export var blend_value: float = 0.0:
+@export_range(0.0, 1.0) var blend_value: float = 0.0:
 	set(newValue):
-		print("setter called, {0}".format([newValue]))
+		# print("setter called, {0}".format([newValue]))
 		if newValue == blend_value:
 			return
 		# assert(movement_state != IDLE_STATE)
@@ -68,11 +69,13 @@ func apply_coordinates():
 	blend_value = 0.0
 	movement_state = WALKING_STATE
 	animation_player.play(walk_animation_name)
+	step_sound_player.play()
 	
 func apply_direction():
 	blend_value = 0.0
 	movement_state = TURNING_STATE
 	animation_player.play(turn_animation_name)
+	step_sound_player.play()
 	
 func _ready():
 	# sync position and rotation to the current coordinates
@@ -99,9 +102,29 @@ func _input(_event):
 func _process(_delta):
 	if movement_state != IDLE_STATE:
 		return
+	var next_command: MovementCommand
 	if command_queue.is_empty():
-		return
-	var next_command := command_queue.pop_front() as MovementCommand
+		# special case: if the queue is empty, but the player still holds the 
+		# movement button, execute that movement immediately
+		var pressedCommands: Array[MovementCommand] = []
+		if Input.is_action_pressed("forward"):
+			pressedCommands.push_back(MovementCommand.FORWARD_COMMAND)
+		if Input.is_action_pressed("backward"):
+			pressedCommands.push_back(MovementCommand.BACK_COMMAND)
+		if Input.is_action_pressed("left"):
+			pressedCommands.push_back(MovementCommand.LEFT_COMMAND)
+		if Input.is_action_pressed("right"):
+			pressedCommands.push_back(MovementCommand.RIGHT_COMMAND)
+		if Input.is_action_pressed("strafe_left"):
+			pressedCommands.push_back(MovementCommand.STRAFE_LEFT_COMMAND)
+		if Input.is_action_pressed("strafe_right"):
+			pressedCommands.push_back(MovementCommand.STRAFE_RIGHT_COMMAND)
+		
+		if pressedCommands.size() != 1:
+			return
+		next_command = pressedCommands[0]
+	else:
+		next_command = command_queue.pop_front() as MovementCommand
 
 	var destination: Vector2i
 	var newDirection: Vector2i = direction

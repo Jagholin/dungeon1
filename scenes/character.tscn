@@ -1,21 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://ce4wj6oaaxs7t"]
+[gd_scene load_steps=11 format=3 uid="uid://ce4wj6oaaxs7t"]
 
 [ext_resource type="Script" path="res://scripts/scenes/character.gd" id="1_mx6dn"]
-
-[sub_resource type="Animation" id="Animation_oecr3"]
-resource_name = "walk"
-length = 0.4
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:blend_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.4)
-}
+[ext_resource type="AudioStream" uid="uid://duievo8wx6opm" path="res://exports/sounds/steps_concrete/step1.mp3" id="2_hg67h"]
+[ext_resource type="AudioStream" uid="uid://dfvtrdx1qn18s" path="res://exports/sounds/steps_concrete/step2.mp3" id="3_nuoe1"]
+[ext_resource type="AudioStream" uid="uid://vanmdt5oitld" path="res://exports/sounds/steps_concrete/step3.mp3" id="4_mlsov"]
+[ext_resource type="AudioStream" uid="uid://djude0e6rkae5" path="res://exports/sounds/steps_concrete/step4.mp3" id="5_7fu05"]
 
 [sub_resource type="Animation" id="Animation_6pqf4"]
 length = 0.001
@@ -29,6 +18,18 @@ tracks/0/keys = {
 "handle_modes": PackedInt32Array(0),
 "points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1, 0.505)]
 }
 
 [sub_resource type="Animation" id="Animation_skpfj"]
@@ -46,6 +47,33 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.4)
 }
 
+[sub_resource type="Animation" id="Animation_oecr3"]
+resource_name = "walk"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:blend_value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.1, 0.00190114, 1, -0.1, 0.00863743, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1, 0.505), Vector3(0, 1.15, 0.505), Vector3(0, 1, 0.505)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rc1eq"]
 _data = {
 "RESET": SubResource("Animation_6pqf4"),
@@ -53,16 +81,31 @@ _data = {
 "walk": SubResource("Animation_oecr3")
 }
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_hsjag"]
+streams_count = 4
+stream_0/stream = ExtResource("2_hg67h")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("3_nuoe1")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("4_mlsov")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("5_7fu05")
+stream_3/weight = 1.0
+
 [node name="Character" type="Node3D"]
 script = ExtResource("1_mx6dn")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.413, 0.505189)
-fov = 90.4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.505)
+fov = 70.8
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_rc1eq")
 }
+speed_scale = 1.348
+
+[node name="StepSoundsPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_hsjag")
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
