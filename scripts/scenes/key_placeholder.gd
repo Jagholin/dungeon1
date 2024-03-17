@@ -2,31 +2,27 @@ class_name KeyItem
 extends Node3D
 
 @onready var physics_body: StaticBody3D = $key/StaticBody3D
+@onready var grid_bound: GridBoundComponent = $GridBoundComponent
 
 signal item_pickup(name: String)
 func emit_pickup_signal():
 	item_pickup.emit(ITEM_NAME)
 
-var grid_coordinate: Vector3i
 var can_be_pickedup: bool = false
 
 const ITEM_NAME := CharacterController.KEY_ITEM_NAME
 
-@export var grid_map: GridMap
-@export var level: Level
+var game_state: GameState
+
+func _notification(what):
+	if what == NOTIFICATION_ENTER_TREE and not game_state:
+		var appNode := get_tree().get_first_node_in_group("app") as AppMain
+		assert(appNode)
+		game_state = appNode.game_state
 
 func _ready():
 	print("ready entered")
-	# calculate coordinate on the GridMap
-	# local coordinate for some point inside the cell that the key "points" to
-	# cells are 2 units long, so 1.0 would be roughly in a middle of a cell
-
-func after_ready():
-	var localTestPoint := Vector3(0, 0, 1.0)
-	var globalTestPoint := to_global(localTestPoint)
-	grid_coordinate = level.map_global_to_gridcoord(globalTestPoint)
-	
-	print("grid coordinate of a key is {0}", grid_coordinate)
+	game_state.character_position_changed.connect(on_character_coordinate_changed)
 	
 func _on_static_body_3d_mouse_entered():
 	print("Mouse entered yay")
@@ -36,7 +32,7 @@ func _on_static_body_3d_mouse_exited():
 
 func on_character_coordinate_changed(c: Vector2i):
 	# test if the character is in the same location as the key item
-	if c.x == grid_coordinate.x and c.y == grid_coordinate.z:
+	if c.x == grid_bound.grid_coordinate.x and c.y == grid_bound.grid_coordinate.z:
 		print("character can pick up the key")
 		can_be_pickedup = true
 	else:
