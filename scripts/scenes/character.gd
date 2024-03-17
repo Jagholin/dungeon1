@@ -4,7 +4,10 @@ extends Node3D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var step_sound_player: AudioStreamPlayer = $StepSoundsPlayer
 
-var wall_tester: Level
+signal character_position_changed(p: Vector2i)
+signal character_direction_changed(d: Vector2i)
+
+var level: Level
 var coordinates: Vector2i = Vector2i.ZERO
 var direction: Vector2i = Vector2i(0, -1)
 
@@ -22,6 +25,9 @@ var movement_state := IDLE_STATE
 
 enum MovementCommand { LEFT_COMMAND, RIGHT_COMMAND, FORWARD_COMMAND, BACK_COMMAND, STRAFE_LEFT_COMMAND, STRAFE_RIGHT_COMMAND }
 var command_queue: Array[MovementCommand] = []
+
+const KEY_ITEM_NAME := "KEY"
+var inventory = []
 
 ## this property is driven by the AnimationPlayer
 ## the starting value is always 0.0, the end value is 1.0 and indicates animation end
@@ -156,7 +162,7 @@ func _process(_delta):
 		apply_direction()
 		
 	if isDestinationChange:
-		if wall_tester.is_a_wall(destination.x, destination.y):
+		if level.is_a_wall(destination.x, destination.y):
 			return
 		new_coordinates = destination
 		apply_coordinates()
@@ -169,6 +175,8 @@ func _on_animation_player_animation_finished(anim_name):
 		movement_state = IDLE_STATE
 		blend_value = 0.0
 		position = coord_to_position(coordinates)
+		print("my coordinate is {0}".format([coordinates]))
+		character_position_changed.emit(coordinates)
 		return
 	elif anim_name == turn_animation_name:
 		assert(movement_state == TURNING_STATE)
@@ -176,6 +184,20 @@ func _on_animation_player_animation_finished(anim_name):
 		movement_state = IDLE_STATE
 		blend_value = 0.0
 		rotation = dir_to_rotation(direction)
+		character_direction_changed.emit(direction)
 		return
 	# TODO: finish other animations as well
 	assert(false, "Unreachable location reached")
+	
+func on_item_pickup(item_name: String):
+	print("Item added: {0}".format([item_name]))
+	level.show_notice("You picked up: {0}".format([item_name]))
+	inventory.push_back(item_name)
+	
+func try_open_door(d: Door) -> bool:
+	var key_item = inventory.find(KEY_ITEM_NAME)
+	if key_item == -1:
+		return false
+	d.open_door()
+	inventory.remove_at(key_item)
+	return true

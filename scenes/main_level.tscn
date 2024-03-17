@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cwaq6t7ay7kko"]
+[gd_scene load_steps=10 format=3 uid="uid://cwaq6t7ay7kko"]
 
 [ext_resource type="Script" path="res://scripts/scenes/main_level.gd" id="1_dirso"]
 [ext_resource type="PackedScene" uid="uid://ce4wj6oaaxs7t" path="res://scenes/character.tscn" id="1_xeivq"]
 [ext_resource type="MeshLibrary" uid="uid://c1pw1i8o83p8k" path="res://resources/mesh_libraries/tiles.tres" id="2_5dq2b"]
+[ext_resource type="PackedScene" uid="uid://cuapipgjafxq7" path="res://scenes/key_placeholder.tscn" id="4_de7nf"]
+[ext_resource type="PackedScene" uid="uid://cyc4omvif7gbx" path="res://scenes/door_placeholder.tscn" id="5_2y68f"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5vh0d"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -15,6 +17,14 @@ sky_material = SubResource("ProceduralSkyMaterial_5vh0d")
 background_mode = 2
 sky = SubResource("Sky_28dv6")
 tonemap_mode = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_76jfm"]
+font_size = 30
+outline_size = 8
+outline_color = Color(0.172549, 0.172549, 0.172549, 1)
+shadow_size = 3
+shadow_color = Color(0.247059, 0.145098, 0.0862745, 0.760784)
+shadow_offset = Vector2(2, 2)
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_dirso")
@@ -35,3 +45,32 @@ cell_center_y = false
 data = {
 "cells": PackedInt32Array(0, 0, 0, 65535, 0, 0, 65535, 65535, 0, 0, 65535, 0, 0, 65534, 0, 65535, 65534, 0, 65534, 65534, 0, 65534, 65535, 0, 65534, 0, 0, 65534, 1, 0, 65535, 1, 0, 0, 1, 0, 1, 65534, 0, 2, 65534, 0, 3, 65534, 0, 3, 65535, 0, 2, 65535, 0, 1, 65535, 0, 1, 0, 0, 2, 0, 0, 3, 0, 0, 3, 1, 0, 2, 1, 0, 1, 1, 0, 2, 65533, 1, 1, 65533, 1, 0, 65533, 1, 65535, 65533, 1, 65534, 65533, 1, 65533, 65533, 1, 65533, 65534, 1, 65533, 65535, 1, 65533, 0, 1, 65533, 1, 1, 65533, 2, 1, 65534, 2, 1, 65535, 2, 1, 0, 2, 1, 1, 2, 1, 2, 2, 1, 3, 2, 1, 4, 1, 1, 4, 2, 1, 4, 65534, 1, 4, 65533, 1, 3, 65533, 1, 4, 0, 0, 4, 65535, 0, 5, 65535, 0, 5, 0, 0, 6, 0, 0, 6, 65535, 0, 7, 65535, 0, 7, 0, 0, 8, 0, 0, 8, 65535, 0, 5, 65534, 1, 6, 65534, 1, 5, 1, 1, 6, 1, 1, 7, 1, 1, 8, 1, 1, 8, 65534, 1, 5, 65533, 1, 5, 65532, 1, 5, 65531, 1, 5, 65530, 1, 6, 65530, 1, 7, 65530, 0, 8, 65530, 1, 9, 65530, 1, 9, 65534, 1, 9, 65533, 1, 9, 65532, 1, 9, 65531, 1, 7, 65534, 0, 7, 65533, 0, 7, 65532, 0, 7, 65531, 0, 6, 65531, 0, 6, 65532, 0, 6, 65533, 0, 8, 65533, 0, 8, 65532, 0, 8, 65531, 0, 9, 1, 1, 10, 1, 1, 11, 1, 1, 12, 1, 1, 12, 0, 1, 12, 65535, 1, 12, 65534, 1, 10, 65534, 1, 11, 65534, 1, 9, 65535, 0, 10, 65535, 0, 11, 65535, 0, 11, 0, 0, 10, 0, 0, 9, 0, 0, 5, 65529, 1, 5, 65528, 1, 5, 65527, 1, 5, 65526, 1, 5, 65525, 1, 5, 65524, 1, 5, 65523, 1, 6, 65523, 1, 7, 65523, 1, 8, 65523, 1, 9, 65523, 1, 9, 65524, 1, 9, 65525, 1, 9, 65526, 1, 9, 65527, 1, 9, 65528, 1, 9, 65529, 1, 6, 65524, 0, 7, 65524, 0, 8, 65524, 0, 8, 65525, 0, 7, 65525, 0, 6, 65525, 0, 6, 65526, 0, 7, 65526, 0, 8, 65526, 0, 8, 65527, 0, 7, 65527, 0, 6, 65527, 0, 6, 65528, 0, 7, 65528, 0, 8, 65528, 0, 8, 65529, 0, 7, 65529, 0, 6, 65529, 0)
 }
+
+[node name="key_placeholder" parent="." node_paths=PackedStringArray("grid_map", "level") instance=ExtResource("4_de7nf")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 23, 1, -2)
+grid_map = NodePath("../GridMap")
+level = NodePath("..")
+
+[node name="door_placeholder" parent="." instance=ExtResource("5_2y68f")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 14, 1, -4)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="UILayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/CenterContainer"]
+layout_mode = 2
+
+[node name="NoticeLabel" type="Label" parent="UILayer/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_76jfm")
+
+[connection signal="character_position_changed" from="Character" to="key_placeholder" method="on_character_coordinate_changed"]
+[connection signal="item_pickup" from="key_placeholder" to="Character" method="on_item_pickup"]

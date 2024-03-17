@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cuapipgjafxq7"]
+
+[ext_resource type="PackedScene" uid="uid://db0mbtfe3bs6x" path="res://exports/key_placeholder.gltf" id="1_6y22b"]
+[ext_resource type="Script" path="res://scripts/scenes/key_placeholder.gd" id="2_svg2w"]
+
+[node name="key_placeholder" instance=ExtResource("1_6y22b")]
+script = ExtResource("2_svg2w")
+
+[connection signal="input_event" from="key/StaticBody3D" to="." method="_on_static_body_3d_input_event"]
+[connection signal="mouse_entered" from="key/StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]
+[connection signal="mouse_exited" from="key/StaticBody3D" to="." method="_on_static_body_3d_mouse_exited"]
