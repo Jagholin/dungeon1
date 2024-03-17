@@ -4,23 +4,23 @@ extends Node3D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var step_sound_player: AudioStreamPlayer = $StepSoundsPlayer
 
-signal character_position_changed(p: Vector2i)
-signal character_direction_changed(d: Vector2i)
-
 var level: Level
-var coordinates: Vector2i = Vector2i.ZERO
-var direction: Vector2i = Vector2i(0, -1)
 
 var new_direction: Vector2i
 var new_coordinates: Vector2i
 
+var game_state: GameState
+
 const walk_animation_name := "walk"
 const turn_animation_name := "turn"
+const wall_animation_name := "wallbump"
 
-## "IDLE", "WALKING" or "TURNING"
 const IDLE_STATE := "IDLE"
 const WALKING_STATE := "WALKING"
 const TURNING_STATE := "TURNING"
+const WALL_BUMP_STATE := "WALL_BUMP"
+const COOLDOWN_STATE := "COOLDOWN"
+## "IDLE", "WALKING", "TURNING", "COOLDOWN" or "WALL_BUMP"
 var movement_state := IDLE_STATE
 
 enum MovementCommand { LEFT_COMMAND, RIGHT_COMMAND, FORWARD_COMMAND, BACK_COMMAND, STRAFE_LEFT_COMMAND, STRAFE_RIGHT_COMMAND }
@@ -28,6 +28,18 @@ var command_queue: Array[MovementCommand] = []
 
 const KEY_ITEM_NAME := "KEY"
 var inventory = []
+var movement_listeners: Array[MovementListenerComponent] = []
+
+func add_movement_listener(listener: MovementListenerComponent):
+	movement_listeners.push_back(listener)
+func remove_movement_listener(listener: MovementListenerComponent):
+	movement_listeners.remove_at(movement_listeners.find(listener))
+
+func _notification(what):
+	if what == NOTIFICATION_ENTER_TREE and not game_state:
+		var appNode := get_tree().get_first_node_in_group("app") as AppMain
+		assert(appNode)
+		game_state = appNode.game_state
 
 ## this property is driven by the AnimationPlayer
 ## the starting value is always 0.0, the end value is 1.0 and indicates animation end
@@ -40,12 +52,12 @@ var inventory = []
 			return
 		# assert(movement_state != IDLE_STATE)
 		blend_value = newValue
-		if movement_state == WALKING_STATE:
-			var startPos := coord_to_position(coordinates)
+		if movement_state == WALKING_STATE or movement_state == WALL_BUMP_STATE:
+			var startPos := coord_to_position(game_state.character_coordinates)
 			var endPos := coord_to_position(new_coordinates)
 			position = (1.0 - blend_value) * startPos + blend_value * endPos
 		elif movement_state == TURNING_STATE:
-			var startRot := dir_to_rotation(direction)
+			var startRot := dir_to_rotation(game_state.character_direction)
 			var endRot := dir_to_rotation(new_direction)
 			# candidate rotations for the end
 			var endRots := [endRot, endRot + Vector3(0, 2 * PI, 0), endRot - Vector3(0, 2 * PI, 0)]
@@ -82,11 +94,22 @@ func apply_direction():
 	movement_state = TURNING_STATE
 	animation_player.play(turn_animation_name)
 	step_sound_player.play()
+
+func apply_wall_bump():
+	blend_value = 0.0
+	movement_state = WALL_BUMP_STATE
+	animation_player.play(wall_animation_name)
+
+func apply_cooldown():
+	movement_state = COOLDOWN_STATE
+	var t := create_tween()
+	t.tween_interval(0.3)
+	t.tween_callback(func(): movement_state = IDLE_STATE)
 	
 func _ready():
 	# sync position and rotation to the current coordinates
-	position = coord_to_position(coordinates)
-	rotation = dir_to_rotation(direction)
+	position = coord_to_position(game_state.character_coordinates)
+	rotation = dir_to_rotation(game_state.character_direction)
 	
 func _input(_event):
 	# limit command queue to 1 command
@@ -133,6 +156,8 @@ func _process(_delta):
 		next_command = command_queue.pop_front() as MovementCommand
 
 	var destination: Vector2i
+	var direction := game_state.character_direction
+	var coordinates := game_state.character_coordinates
 	var newDirection: Vector2i = direction
 	var isDirectionChange = false
 	var isDestinationChange = false
@@ -163,7 +188,15 @@ func _process(_delta):
 		
 	if isDestinationChange:
 		if level.is_a_wall(destination.x, destination.y):
+			new_coordinates = destination
+			apply_wall_bump()
 			return
+
+		for ml in movement_listeners:
+			if ml.on_movement_initiated(Vector3i(destination.x, 0, destination.y)) == MovementListenerComponent.MovementEffect.PREVENT_MOVEMENT:
+				apply_cooldown()
+				return
+
 		new_coordinates = destination
 		apply_coordinates()
 
@@ -171,20 +204,22 @@ func _on_animation_player_animation_finished(anim_name):
 	if anim_name == walk_animation_name:
 		# finish current movement command and reset blend value
 		assert(movement_state == WALKING_STATE)
-		coordinates = new_coordinates
+		game_state.character_coordinates = new_coordinates
 		movement_state = IDLE_STATE
 		blend_value = 0.0
-		position = coord_to_position(coordinates)
-		print("my coordinate is {0}".format([coordinates]))
-		character_position_changed.emit(coordinates)
+		position = coord_to_position(game_state.character_coordinates)
 		return
 	elif anim_name == turn_animation_name:
 		assert(movement_state == TURNING_STATE)
-		direction = new_direction
+		game_state.character_direction = new_direction
 		movement_state = IDLE_STATE
 		blend_value = 0.0
-		rotation = dir_to_rotation(direction)
-		character_direction_changed.emit(direction)
+		rotation = dir_to_rotation(game_state.character_direction)
+		return
+	elif anim_name == wall_animation_name:
+		assert(movement_state == WALL_BUMP_STATE)
+		movement_state = IDLE_STATE
+		blend_value = 0.0
 		return
 	# TODO: finish other animations as well
 	assert(false, "Unreachable location reached")

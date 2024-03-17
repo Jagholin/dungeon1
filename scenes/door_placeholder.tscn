@@ -1,7 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://cyc4omvif7gbx"]
+[gd_scene load_steps=5 format=3 uid="uid://cyc4omvif7gbx"]
 
 [ext_resource type="PackedScene" uid="uid://sei4k0sc52cr" path="res://exports/door_placeholder.gltf" id="1_0cuqt"]
 [ext_resource type="Script" path="res://scripts/scenes/door_placeholder.gd" id="2_lpnlo"]
+[ext_resource type="Script" path="res://scripts/grid_bound.gd" id="3_ixrei"]
+[ext_resource type="Script" path="res://scripts/movement_listener.gd" id="4_svx10"]
 
 [node name="door_placeholder" groups=["door"] instance=ExtResource("1_0cuqt")]
 script = ExtResource("2_lpnlo")
+
+[node name="GridBoundComponent" type="Node3D" parent="." index="1"]
+script = ExtResource("3_ixrei")
+on_the_wall = false
+
+[node name="MovementListenerComponent" type="Node3D" parent="." index="2" node_paths=PackedStringArray("grid_bound")]
+script = ExtResource("4_svx10")
+grid_bound = NodePath("../GridBoundComponent")

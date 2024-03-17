@@ -7,7 +7,7 @@ var mesh_library: MeshLibrary
 @onready var key_item: KeyItem = $key_placeholder
 @onready var notice_label: Label = %NoticeLabel
 
-# var doors: Array[Door] = []
+var doors: Array[Door] = []
 func get_doors():
 	return get_tree().get_nodes_in_group("door")
 
@@ -18,19 +18,17 @@ func show_notice(n: String):
 	tween.tween_callback(func():
 		notice_label.text = "")
 
-## returns trus if the tile at (x, y) is a wall
+## Returns door in cell x, z or null if the cell has no door in it
+func get_door_at(x, z) -> Door:
+	for d in doors:
+		if d.grid_coordinate.x == x and d.grid_coordinate.z == z:
+			return d
+	return null
+
+## returns true if the tile at (x, y) is a wall
 ## tests the name of the tile and if it has "wall" in it returns true
 func is_a_wall(x, z) -> bool:
 	var item := grid_map.get_cell_item(Vector3i(x, 0, z))
-	for d in get_doors():
-		if not d.closed:
-			continue
-		if d.grid_coordinate.x == x and d.grid_coordinate.z == z:
-			var wasOpened := try_open_door(d)
-			if not d.closed:
-				return false
-			show_notice("You need a key to open this door")
-			return true
 	return mesh_library.get_item_name(item).contains("wall")
 
 func _ready():
@@ -45,13 +43,12 @@ func _ready():
 	
 	# find all doors and add them to the door array
 	for c in get_doors():
-		c.initialize(self)
+		doors.push_back(c)
+		c.tree_exited.connect(func(): doors.remove_at(doors.find(c)))
 	
-	key_item.after_ready()
+	get_tree().call_group(&"after_ready", &"after_ready", self)
+	# key_item.after_ready()
 	
 func map_global_to_gridcoord(c: Vector3) -> Vector3i:
 	var localGridTestPoint := grid_map.to_local(c)
 	return grid_map.local_to_map(localGridTestPoint)
-	
-func try_open_door(d: Door) -> bool:
-	return character.try_open_door(d)
