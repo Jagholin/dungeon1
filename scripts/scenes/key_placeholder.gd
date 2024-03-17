@@ -16,7 +16,7 @@ var game_state: GameState
 
 func _notification(what):
 	if what == NOTIFICATION_ENTER_TREE and not game_state:
-		var appNode := get_tree().get_first_node_in_group("app") as AppMain
+		var appNode := Globals.get_app_node()
 		assert(appNode)
 		game_state = appNode.game_state
 
