@@ -1,0 +1,106 @@
+[gd_scene load_steps=9 format=3 uid="uid://b0qyku6hr5ct2"]
+
+[ext_resource type="PackedScene" uid="uid://bmyvdoleiwhwg" path="res://exports/spikes.gltf" id="1_vha4p"]
+[ext_resource type="Script" path="res://scripts/scenes/spikes.gd" id="2_fnnwo"]
+[ext_resource type="Script" path="res://scripts/grid_bound.gd" id="3_4x8hr"]
+[ext_resource type="Script" path="res://scripts/movement_listener.gd" id="4_qnq3b"]
+
+[sub_resource type="Animation" id="Animation_111qj"]
+resource_name = "activate"
+length = 0.15
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("spikes:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, -0.5, 0), Vector3(0, 0.141797, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.091),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"set_hurting"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_qt0b1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("spikes:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -0.5, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_wjxjn"]
+resource_name = "deactivate"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("spikes:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0.141797, 0), Vector3(0, -0.578748, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.692495),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"reset_hurting"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_agqaq"]
+_data = {
+"RESET": SubResource("Animation_qt0b1"),
+"activate": SubResource("Animation_111qj"),
+"deactivate": SubResource("Animation_wjxjn")
+}
+
+[node name="spikes" instance=ExtResource("1_vha4p")]
+script = ExtResource("2_fnnwo")
+
+[node name="spikes" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="GridBoundComponent" type="Node3D" parent="." index="2"]
+script = ExtResource("3_4x8hr")
+on_the_wall = false
+
+[node name="MovementListenerComponent" type="Node3D" parent="." index="3" node_paths=PackedStringArray("grid_bound")]
+script = ExtResource("4_qnq3b")
+grid_bound = NodePath("../GridBoundComponent")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="4"]
+libraries = {
+"": SubResource("AnimationLibrary_agqaq")
+}
