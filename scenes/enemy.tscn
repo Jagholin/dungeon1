@@ -10,11 +10,6 @@ albedo_color = Color(0.192157, 0.6, 0.360784, 1)
 [node name="Enemy" type="Node3D"]
 script = ExtResource("1_38w3t")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-size = Vector3(0.5, 0.5, 0.5)
-material = SubResource("StandardMaterial3D_gh2ne")
-
 [node name="GridMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player")]
 script = ExtResource("1_uum3n")
 animation_player = NodePath("../AnimationPlayer")
@@ -30,5 +25,16 @@ libraries = {
 [node name="Timer" type="Timer" parent="."]
 wait_time = 3.0
 autostart = true
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+size = Vector3(0.5, 0.5, 0.5)
+material = SubResource("StandardMaterial3D_gh2ne")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.1)
+size = Vector3(0.1, 0.1, 0.4)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

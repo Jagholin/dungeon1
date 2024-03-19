@@ -117,7 +117,7 @@ func approach(pos: Vector3i) -> int:
 		return NO_PATH
 	var next_cell := path_cache[0] as Vector3i
 
-	if next_cell == pos:
+	if next_cell == pos and grid_direction + grid_coordinate == next_cell:
 		return POSITION_REACHED
 
 	if grid_direction + grid_coordinate == next_cell:
