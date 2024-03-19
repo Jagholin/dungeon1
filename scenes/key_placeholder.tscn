@@ -2,13 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://db0mbtfe3bs6x" path="res://exports/key_placeholder.gltf" id="1_6y22b"]
 [ext_resource type="Script" path="res://scripts/scenes/key_placeholder.gd" id="2_svg2w"]
-[ext_resource type="Script" path="res://scripts/grid_bound.gd" id="3_17tvw"]
+[ext_resource type="Script" path="res://scripts/components/grid_bound.gd" id="3_rjii8"]
 
 [node name="key_placeholder" instance=ExtResource("1_6y22b")]
 script = ExtResource("2_svg2w")
 
 [node name="GridBoundComponent" type="Node3D" parent="." index="1"]
-script = ExtResource("3_17tvw")
+script = ExtResource("3_rjii8")
 
 [connection signal="input_event" from="key/StaticBody3D" to="." method="_on_static_body_3d_input_event"]
 [connection signal="mouse_entered" from="key/StaticBody3D" to="." method="_on_static_body_3d_mouse_entered"]

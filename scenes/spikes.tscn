@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://bmyvdoleiwhwg" path="res://exports/spikes.gltf" id="1_vha4p"]
 [ext_resource type="Script" path="res://scripts/scenes/spikes.gd" id="2_fnnwo"]
-[ext_resource type="Script" path="res://scripts/grid_bound.gd" id="3_4x8hr"]
-[ext_resource type="Script" path="res://scripts/movement_listener.gd" id="4_qnq3b"]
+[ext_resource type="Script" path="res://scripts/components/grid_bound.gd" id="3_meuld"]
+[ext_resource type="Script" path="res://scripts/components/movement_listener.gd" id="4_ytjs7"]
 
 [sub_resource type="Animation" id="Animation_qt0b1"]
 length = 0.001
@@ -93,11 +93,11 @@ script = ExtResource("2_fnnwo")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
 [node name="GridBoundComponent" type="Node3D" parent="." index="2"]
-script = ExtResource("3_4x8hr")
+script = ExtResource("3_meuld")
 on_the_wall = false
 
 [node name="MovementListenerComponent" type="Node3D" parent="." index="3" node_paths=PackedStringArray("grid_bound")]
-script = ExtResource("4_qnq3b")
+script = ExtResource("4_ytjs7")
 grid_bound = NodePath("../GridBoundComponent")
 is_an_obstacle = false
 

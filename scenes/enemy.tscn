@@ -1,17 +1,17 @@
 [gd_scene load_steps=5 format=3 uid="uid://bvwdkg4ijhg7b"]
 
-[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_38w3t"]
-[ext_resource type="Script" path="res://scripts/ai_movement.gd" id="1_uum3n"]
+[ext_resource type="Script" path="res://scripts/scenes/enemy.gd" id="1_buuye"]
+[ext_resource type="Script" path="res://scripts/components/ai_movement.gd" id="2_482be"]
 [ext_resource type="AnimationLibrary" uid="uid://4lkfhqxl5mc2" path="res://resources/anim_library/movement.tres" id="2_ut4w1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gh2ne"]
 albedo_color = Color(0.192157, 0.6, 0.360784, 1)
 
 [node name="Enemy" type="Node3D"]
-script = ExtResource("1_38w3t")
+script = ExtResource("1_buuye")
 
 [node name="GridMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player")]
-script = ExtResource("1_uum3n")
+script = ExtResource("2_482be")
 animation_player = NodePath("../AnimationPlayer")
 movement_listeners_can_interrupt = true
 warn_on_movement_listener_interruption = true
@@ -23,7 +23,7 @@ libraries = {
 }
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 1.5
 autostart = true
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
