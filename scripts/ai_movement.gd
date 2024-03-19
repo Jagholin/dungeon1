@@ -68,6 +68,7 @@ func _pathfindTo(pos: Vector3i, obstaclePred: Callable, maxDistance: int = 10000
 	
 	if pathFound:
 		var result: Array[Vector3i] = []
+		endLocation = endLocation.previous_location
 		while endLocation:
 			result.push_back(endLocation.loc)
 			endLocation = endLocation.previous_location
@@ -75,9 +76,65 @@ func _pathfindTo(pos: Vector3i, obstaclePred: Callable, maxDistance: int = 10000
 			
 	return []
 
-func move_to(pos: Vector3i):
+enum {POSITION_REACHED, NO_PATH, MOVING}
+## returns one of the POSITION_REACHED, NO_PATH, MOVING
+func move_to(pos: Vector3i) -> int:
 	if pos != path_goal:
 		path_cache = _pathfindTo(pos, func(p: Vector3i): 
 			return Obstacles.is_an_obstacle(p) or Globals.get_current_level().is_a_wall(p))
 		path_goal = pos
 	print("Current path is ", path_cache)
+	if grid_coordinate == pos:
+		return POSITION_REACHED
+	if path_cache.is_empty():
+		return NO_PATH
+	var next_cell := path_cache[0] as Vector3i
+
+	if grid_direction + grid_coordinate == next_cell:
+		# move me forward
+		move_forward()
+		path_cache.pop_front()
+	elif grid_coordinate - grid_direction == next_cell:
+		# do 180
+		rotate_left()
+	elif grid_coordinate + Vector3i(grid_direction.z, 0, grid_direction.x) == next_cell:
+		rotate_left()
+	elif grid_coordinate + Vector3i(grid_direction.z, 0, grid_direction.x) == next_cell:
+		rotate_right()
+	else:
+		push_error("This cant happen lol")
+
+	return MOVING
+
+## returns one of the POSITION_REACHED, NO_PATH, MOVING
+func approach(pos: Vector3i) -> int:
+	if pos != path_goal:
+		path_cache = _pathfindTo(pos, func(p: Vector3i): 
+			return Obstacles.is_an_obstacle(p) or Globals.get_current_level().is_a_wall(p))
+		path_goal = pos
+	print("Current path is ", path_cache)
+	if path_cache.is_empty():
+		return NO_PATH
+	var next_cell := path_cache[0] as Vector3i
+
+	if next_cell == pos:
+		return POSITION_REACHED
+
+	if grid_direction + grid_coordinate == next_cell:
+		# move me forward
+		move_forward()
+		path_cache.pop_front()
+	elif grid_coordinate - grid_direction == next_cell:
+		# do 180
+		print("180 - rotating left")
+		rotate_left()
+	elif grid_coordinate + Vector3i(grid_direction.z, 0, -grid_direction.x) == next_cell:
+		print("rotating left")
+		rotate_left()
+	elif grid_coordinate + Vector3i(-grid_direction.z, 0, grid_direction.x) == next_cell:
+		print("rotating right")
+		rotate_right()
+	else:
+		push_error("This cant happen lol")
+
+	return MOVING

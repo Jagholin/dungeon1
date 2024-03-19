@@ -30,7 +30,12 @@ const TURNING_STATE := "TURNING"
 const WALL_BUMP_STATE := "WALL_BUMP"
 const COOLDOWN_STATE := "COOLDOWN"
 ## "IDLE", "WALKING", "TURNING", "COOLDOWN" or "WALL_BUMP"
-var movement_state := IDLE_STATE
+var movement_state := IDLE_STATE:
+	set(newState):
+		if movement_state == newState:
+			return
+		movement_state = newState
+		print("applied state: ", newState)
 
 var movement_listeners: Array[MovementListenerComponent] = []
 

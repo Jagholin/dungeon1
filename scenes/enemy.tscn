@@ -15,7 +15,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 size = Vector3(0.5, 0.5, 0.5)
 material = SubResource("StandardMaterial3D_gh2ne")
 
-[node name="AIMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player")]
+[node name="GridMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player")]
 script = ExtResource("1_uum3n")
 animation_player = NodePath("../AnimationPlayer")
 movement_listeners_can_interrupt = true
@@ -24,5 +24,11 @@ on_the_wall = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"movement": ExtResource("2_ut4w1")
+"": ExtResource("2_ut4w1")
 }
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

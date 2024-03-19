@@ -76,7 +76,7 @@ label_settings = SubResource("LabelSettings_76jfm")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -8)
 
 [node name="Enemy" parent="." instance=ExtResource("7_w1k80")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -2)
 
 [node name="door_placeholder2" parent="." instance=ExtResource("5_2y68f")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 14, 1, 2)
