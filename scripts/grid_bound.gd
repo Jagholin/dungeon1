@@ -5,6 +5,8 @@
 class_name GridBoundComponent
 extends Component
 
+const GB_COMPONENT_NAME := &"GridBoundComponent"
+
 signal grid_coordinate_changed(c: Vector3i)
 var grid_coordinate: Vector3i:
 	set(newValue):
@@ -29,4 +31,9 @@ func after_ready(l: Level):
 	print("grid coordinate of a key is {0}", grid_coordinate)
 
 func get_component_name() -> StringName:
-	return &"GridBoundComponent"
+	return GB_COMPONENT_NAME
+
+func get_component_names() -> Array[StringName]:
+	var temp := super.get_component_names()
+	temp.push_back(GB_COMPONENT_NAME)
+	return temp

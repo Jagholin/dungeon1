@@ -2,6 +2,8 @@
 class_name GridDirectionalComponent
 extends GridBoundComponent
 
+const GD_COMPONENT_NAME := &"GridDirectionalComponent"
+
 signal grid_direction_changed(dir: Vector3i)
 var grid_direction: Vector3i:
 	set(newValue):
@@ -21,5 +23,9 @@ func after_ready(l: Level):
 	print("GridDirectionalComponent: Grid direction of ", grid_direction)
 
 func get_component_name() -> StringName:
-	return &"GridDirectionalComponent"
+	return GD_COMPONENT_NAME
 
+func get_component_names() -> Array[StringName]:
+	var temp := super.get_component_names()
+	temp.push_back(GD_COMPONENT_NAME)
+	return temp

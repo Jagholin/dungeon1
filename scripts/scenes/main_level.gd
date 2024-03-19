@@ -20,7 +20,7 @@ func is_a_wall(c: Vector3i) -> bool:
 	return mesh_library.get_item_name(item).contains("wall")
 
 func _ready():
-	character.level = self
+	# character.level = self
 	mesh_library = grid_map.mesh_library
 	# var item := grid_map.get_cell_item(Vector3i(1, 0, 1))
 	

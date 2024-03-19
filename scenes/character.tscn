@@ -5,14 +5,14 @@
 [ext_resource type="AudioStream" uid="uid://dfvtrdx1qn18s" path="res://exports/sounds/steps_concrete/step2.mp3" id="3_nuoe1"]
 [ext_resource type="AudioStream" uid="uid://vanmdt5oitld" path="res://exports/sounds/steps_concrete/step3.mp3" id="4_mlsov"]
 [ext_resource type="AudioStream" uid="uid://djude0e6rkae5" path="res://exports/sounds/steps_concrete/step4.mp3" id="5_7fu05"]
-[ext_resource type="Script" path="res://scripts/grid_directional.gd" id="6_kd1ir"]
+[ext_resource type="Script" path="res://scripts/grid_movement_component.gd" id="6_l13uc"]
 
 [sub_resource type="Animation" id="Animation_6pqf4"]
 length = 0.001
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:blend_value")
+tracks/0/path = NodePath("GridMovementComponent:blend_value")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -39,7 +39,7 @@ length = 0.4
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:blend_value")
+tracks/0/path = NodePath("GridMovementComponent:blend_value")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -54,7 +54,7 @@ length = 0.4
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:blend_value")
+tracks/0/path = NodePath("GridMovementComponent:blend_value")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -81,7 +81,7 @@ length = 0.4
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:blend_value")
+tracks/0/path = NodePath("GridMovementComponent:blend_value")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -137,8 +137,9 @@ speed_scale = 1.348
 [node name="StepSoundsPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_hsjag")
 
-[node name="GridDirectionalComponent" type="Node3D" parent="."]
-script = ExtResource("6_kd1ir")
+[node name="GridMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player", "step_sound_player")]
+script = ExtResource("6_l13uc")
+animation_player = NodePath("../AnimationPlayer")
+step_sound_player = NodePath("../StepSoundsPlayer")
+movement_listeners_can_interrupt = true
 on_the_wall = false
-
-[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
