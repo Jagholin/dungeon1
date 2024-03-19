@@ -14,11 +14,8 @@ var state = "HIDDEN"
 var hurting: bool = false
 
 var time_elapsed := 0.0
-var game_state: GameState
 
-func player_is_standing() -> bool:
-	return game_state.character_coordinates.x == grid_bound.grid_coordinate.x and \
-		game_state.character_coordinates.y == grid_bound.grid_coordinate.z
+var player_on_it: bool = false
 
 func set_hurting():
 	hurting = true
@@ -50,13 +47,18 @@ func apply_hidden():
 	anim_player.play(deactivate_animation)
 
 func _ready():
-	game_state = Globals.get_app_node().game_state
+	var charComponent := Globals.get_character_controller().get_component(&"GridDirectionalComponent") as GridDirectionalComponent
+	assert(charComponent)
+	charComponent.grid_coordinate_changed.connect(on_character_coordinate_changed)
+
+func on_character_coordinate_changed(c: Vector3i):
+	player_on_it = c == grid_bound.grid_coordinate
 
 func _process(delta):
-	if hurting and player_is_standing():
+	if hurting and player_on_it:
 		oops()
 	if state == ACTIVE_STATE:
-		if player_is_standing():
+		if player_on_it:
 			time_elapsed = 0
 		
 		time_elapsed += delta

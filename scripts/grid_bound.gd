@@ -1,7 +1,18 @@
+
+## Component class for entities that are bound to the game's grid
+## (either free-floating or mounted on the wall)
+## Retrieves their coordinate at the start of the level.
 class_name GridBoundComponent
 extends Component
 
-var grid_coordinate: Vector3i
+signal grid_coordinate_changed(c: Vector3i)
+var grid_coordinate: Vector3i:
+	set(newValue):
+		if newValue == grid_coordinate:
+			return
+		grid_coordinate = newValue
+		grid_coordinate_changed.emit(newValue)
+
 @export var on_the_wall: bool = true
 
 func _init():
@@ -16,3 +27,6 @@ func after_ready(l: Level):
 	grid_coordinate = l.map_global_to_gridcoord(globalTestPoint)
 	
 	print("grid coordinate of a key is {0}", grid_coordinate)
+
+func get_component_name() -> StringName:
+	return &"GridBoundComponent"

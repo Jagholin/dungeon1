@@ -5,6 +5,21 @@
 [ext_resource type="Script" path="res://scripts/grid_bound.gd" id="3_4x8hr"]
 [ext_resource type="Script" path="res://scripts/movement_listener.gd" id="4_qnq3b"]
 
+[sub_resource type="Animation" id="Animation_qt0b1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("spikes:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -0.5, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_111qj"]
 resource_name = "activate"
 length = 0.15
@@ -33,21 +48,6 @@ tracks/1/keys = {
 "args": [],
 "method": &"set_hurting"
 }]
-}
-
-[sub_resource type="Animation" id="Animation_qt0b1"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("spikes:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, -0.5, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_wjxjn"]

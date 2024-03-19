@@ -3,13 +3,12 @@ extends Node3D
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var step_sound_player: AudioStreamPlayer = $StepSoundsPlayer
+@onready var grid_directional: GridDirectionalComponent = $GridDirectionalComponent
 
 var level: Level
 
-var new_direction: Vector2i
-var new_coordinates: Vector2i
-
-var game_state: GameState
+var new_direction: Vector3i
+var new_coordinates: Vector3i
 
 const walk_animation_name := "walk"
 const turn_animation_name := "turn"
@@ -35,12 +34,6 @@ func add_movement_listener(listener: MovementListenerComponent):
 func remove_movement_listener(listener: MovementListenerComponent):
 	movement_listeners.remove_at(movement_listeners.find(listener))
 
-func _notification(what):
-	if what == NOTIFICATION_ENTER_TREE and not game_state:
-		var appNode := Globals.get_app_node()
-		assert(appNode)
-		game_state = appNode.game_state
-
 ## this property is driven by the AnimationPlayer
 ## the starting value is always 0.0, the end value is 1.0 and indicates animation end
 ##
@@ -53,11 +46,11 @@ func _notification(what):
 		# assert(movement_state != IDLE_STATE)
 		blend_value = newValue
 		if movement_state == WALKING_STATE or movement_state == WALL_BUMP_STATE:
-			var startPos := coord_to_position(game_state.character_coordinates)
+			var startPos := coord_to_position(grid_directional.grid_coordinate)
 			var endPos := coord_to_position(new_coordinates)
 			position = (1.0 - blend_value) * startPos + blend_value * endPos
 		elif movement_state == TURNING_STATE:
-			var startRot := dir_to_rotation(game_state.character_direction)
+			var startRot := dir_to_rotation(grid_directional.grid_direction)
 			var endRot := dir_to_rotation(new_direction)
 			# candidate rotations for the end
 			var endRots := [endRot, endRot + Vector3(0, 2 * PI, 0), endRot - Vector3(0, 2 * PI, 0)]
@@ -67,21 +60,20 @@ func _notification(what):
 			endRot = endRots[2] if (endRots[2] - startRot).abs() < (endRot - startRot).abs() else endRot
 			rotation = (1.0 - blend_value) * startRot + blend_value * endRot
 
-func coord_to_position(c: Vector2i) -> Vector3:
-	return Vector3(c.x * 2, position.y, c.y * 2)
+func coord_to_position(c: Vector3i) -> Vector3:
+	return Vector3(c.x * 2, position.y, c.z * 2)
 	
-func dir_to_rotation(c: Vector2i) -> Vector3:
-	if c.y == -1:
+func dir_to_rotation(c: Vector3i) -> Vector3:
+	if c.z == -1:
 		return Vector3(0, 0, 0)
 	elif c.x == -1:
 		return Vector3(0, PI / 2.0, 0)
-	elif c.y == 1:
+	elif c.z == 1:
 		return Vector3(0, PI, 0)
 	elif c.x == 1:
 		return Vector3(0, 3.0 * PI / 2.0, 0)
-	push_error("Unexpected direction value")
+	push_error("Unexpected direction value, {0}".format([c]))
 	return Vector3(0, 0, 0)
-	
 
 func apply_coordinates():
 	blend_value = 0.0
@@ -108,8 +100,9 @@ func apply_cooldown():
 	
 func _ready():
 	# sync position and rotation to the current coordinates
-	position = coord_to_position(game_state.character_coordinates)
-	rotation = dir_to_rotation(game_state.character_direction)
+	# position = coord_to_position(game_state.character_coordinates)
+	# rotation = dir_to_rotation(game_state.character_direction)
+	pass
 	
 func _input(_event):
 	# limit command queue to 1 command
@@ -155,10 +148,10 @@ func _process(_delta):
 	else:
 		next_command = command_queue.pop_front() as MovementCommand
 
-	var destination: Vector2i
-	var direction := game_state.character_direction
-	var coordinates := game_state.character_coordinates
-	var newDirection: Vector2i = direction
+	var destination: Vector3i
+	var direction := grid_directional.grid_direction
+	var coordinates := grid_directional.grid_coordinate
+	var newDirection: Vector3i = direction
 	var isDirectionChange = false
 	var isDestinationChange = false
 	if next_command == MovementCommand.FORWARD_COMMAND:
@@ -168,17 +161,17 @@ func _process(_delta):
 		destination = coordinates - direction
 		isDestinationChange = true
 	if next_command == MovementCommand.LEFT_COMMAND:
-		newDirection = Vector2i(direction.y, -direction.x)
+		newDirection = Vector3i(direction.z, 0, -direction.x)
 		isDirectionChange = true
 	if next_command == MovementCommand.RIGHT_COMMAND:
-		newDirection = Vector2i(-direction.y, direction.x)
+		newDirection = Vector3i(-direction.z, 0, direction.x)
 		isDirectionChange = true
 	if next_command == MovementCommand.STRAFE_LEFT_COMMAND:
-		var myDirection := Vector2i(direction.y, -direction.x)
+		var myDirection := Vector3i(direction.z, 0, -direction.x)
 		destination = coordinates + myDirection
 		isDestinationChange = true
 	if next_command == MovementCommand.STRAFE_RIGHT_COMMAND:
-		var myDirection := Vector2i(-direction.y, direction.x)
+		var myDirection := Vector3i(-direction.z, 0, direction.x)
 		destination = coordinates + myDirection
 		isDestinationChange = true
 	
@@ -187,13 +180,13 @@ func _process(_delta):
 		apply_direction()
 		
 	if isDestinationChange:
-		if level.is_a_wall(destination.x, destination.y):
+		if level.is_a_wall(destination):
 			new_coordinates = destination
 			apply_wall_bump()
 			return
 
 		for ml in movement_listeners:
-			if ml.on_movement_initiated(Vector3i(destination.x, 0, destination.y)) == MovementListenerComponent.MovementEffect.PREVENT_MOVEMENT:
+			if ml.on_movement_initiated(destination) == MovementListenerComponent.MovementEffect.PREVENT_MOVEMENT:
 				apply_cooldown()
 				return
 
@@ -204,17 +197,17 @@ func _on_animation_player_animation_finished(anim_name):
 	if anim_name == walk_animation_name:
 		# finish current movement command and reset blend value
 		assert(movement_state == WALKING_STATE)
-		game_state.character_coordinates = new_coordinates
+		grid_directional.grid_coordinate = new_coordinates
 		movement_state = IDLE_STATE
 		blend_value = 0.0
-		position = coord_to_position(game_state.character_coordinates)
+		position = coord_to_position(new_coordinates)
 		return
 	elif anim_name == turn_animation_name:
 		assert(movement_state == TURNING_STATE)
-		game_state.character_direction = new_direction
+		grid_directional.grid_direction = new_direction
 		movement_state = IDLE_STATE
 		blend_value = 0.0
-		rotation = dir_to_rotation(game_state.character_direction)
+		rotation = dir_to_rotation(new_direction)
 		return
 	elif anim_name == wall_animation_name:
 		assert(movement_state == WALL_BUMP_STATE)
@@ -236,3 +229,9 @@ func try_open_door(d: Door) -> bool:
 	d.open_door()
 	inventory.remove_at(key_item)
 	return true
+
+func get_component(componentClassName: StringName) -> Component:
+	for c in get_children():
+		if Component.is_a_component(c) and c.get_component_name() == componentClassName:
+			return c as Component
+	return null

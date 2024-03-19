@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://ce4wj6oaaxs7t"]
+[gd_scene load_steps=13 format=3 uid="uid://ce4wj6oaaxs7t"]
 
 [ext_resource type="Script" path="res://scripts/scenes/character.gd" id="1_mx6dn"]
 [ext_resource type="AudioStream" uid="uid://duievo8wx6opm" path="res://exports/sounds/steps_concrete/step1.mp3" id="2_hg67h"]
 [ext_resource type="AudioStream" uid="uid://dfvtrdx1qn18s" path="res://exports/sounds/steps_concrete/step2.mp3" id="3_nuoe1"]
 [ext_resource type="AudioStream" uid="uid://vanmdt5oitld" path="res://exports/sounds/steps_concrete/step3.mp3" id="4_mlsov"]
 [ext_resource type="AudioStream" uid="uid://djude0e6rkae5" path="res://exports/sounds/steps_concrete/step4.mp3" id="5_7fu05"]
+[ext_resource type="Script" path="res://scripts/grid_directional.gd" id="6_kd1ir"]
 
 [sub_resource type="Animation" id="Animation_6pqf4"]
 length = 0.001
@@ -135,5 +136,9 @@ speed_scale = 1.348
 
 [node name="StepSoundsPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_hsjag")
+
+[node name="GridDirectionalComponent" type="Node3D" parent="."]
+script = ExtResource("6_kd1ir")
+on_the_wall = false
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

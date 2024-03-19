@@ -15,8 +15,8 @@ func show_notice(n: String):
 
 ## returns true if the tile at (x, y) is a wall
 ## tests the name of the tile and if it has "wall" in it returns true
-func is_a_wall(x, z) -> bool:
-	var item := grid_map.get_cell_item(Vector3i(x, 0, z))
+func is_a_wall(c: Vector3i) -> bool:
+	var item := grid_map.get_cell_item(c)
 	return mesh_library.get_item_name(item).contains("wall")
 
 func _ready():
