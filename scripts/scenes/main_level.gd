@@ -31,8 +31,10 @@ func _ready():
 	
 	# find all doors and add them to the door array
 	
+	call_deferred(&"after_ready")
+
+func after_ready():
 	get_tree().call_group(&"after_ready", &"after_ready", self)
-	# key_item.after_ready()
 	
 func map_global_to_gridcoord(c: Vector3) -> Vector3i:
 	var localGridTestPoint := grid_map.to_local(c)

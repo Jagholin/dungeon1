@@ -27,8 +27,6 @@ func after_ready(l: Level):
 	var localTestPoint := Vector3(0, 0, 1.0) if on_the_wall else Vector3.ZERO
 	var globalTestPoint := target.to_global(localTestPoint)
 	grid_coordinate = l.map_global_to_gridcoord(globalTestPoint)
-	
-	print("grid coordinate of a key is {0}", grid_coordinate)
 
 func get_component_name() -> StringName:
 	return GB_COMPONENT_NAME

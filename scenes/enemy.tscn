@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://bvwdkg4ijhg7b"]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_38w3t"]
+[ext_resource type="Script" path="res://scripts/ai_movement.gd" id="1_uum3n"]
+[ext_resource type="AnimationLibrary" uid="uid://4lkfhqxl5mc2" path="res://resources/anim_library/movement.tres" id="2_ut4w1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gh2ne"]
+albedo_color = Color(0.192157, 0.6, 0.360784, 1)
+
+[node name="Enemy" type="Node3D"]
+script = ExtResource("1_38w3t")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+size = Vector3(0.5, 0.5, 0.5)
+material = SubResource("StandardMaterial3D_gh2ne")
+
+[node name="AIMovementComponent" type="Node3D" parent="." node_paths=PackedStringArray("animation_player")]
+script = ExtResource("1_uum3n")
+animation_player = NodePath("../AnimationPlayer")
+movement_listeners_can_interrupt = true
+warn_on_movement_listener_interruption = true
+on_the_wall = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"movement": ExtResource("2_ut4w1")
+}

@@ -69,13 +69,15 @@ func apply_coordinates():
 	blend_value = 0.0
 	movement_state = WALKING_STATE
 	animation_player.play(walk_animation_name)
-	step_sound_player.play()
+	if step_sound_player:
+		step_sound_player.play()
 	
 func apply_direction():
 	blend_value = 0.0
 	movement_state = TURNING_STATE
 	animation_player.play(turn_animation_name)
-	step_sound_player.play()
+	if step_sound_player:
+		step_sound_player.play()
 
 func apply_wall_bump():
 	blend_value = 0.0

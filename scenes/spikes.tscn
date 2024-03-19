@@ -99,6 +99,7 @@ on_the_wall = false
 [node name="MovementListenerComponent" type="Node3D" parent="." index="3" node_paths=PackedStringArray("grid_bound")]
 script = ExtResource("4_qnq3b")
 grid_bound = NodePath("../GridBoundComponent")
+is_an_obstacle = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="4"]
 libraries = {

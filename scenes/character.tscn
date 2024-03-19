@@ -1,114 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://ce4wj6oaaxs7t"]
+[gd_scene load_steps=9 format=3 uid="uid://ce4wj6oaaxs7t"]
 
 [ext_resource type="Script" path="res://scripts/scenes/character.gd" id="1_mx6dn"]
+[ext_resource type="AnimationLibrary" uid="uid://4lkfhqxl5mc2" path="res://resources/anim_library/movement.tres" id="2_7csy8"]
 [ext_resource type="AudioStream" uid="uid://duievo8wx6opm" path="res://exports/sounds/steps_concrete/step1.mp3" id="2_hg67h"]
 [ext_resource type="AudioStream" uid="uid://dfvtrdx1qn18s" path="res://exports/sounds/steps_concrete/step2.mp3" id="3_nuoe1"]
 [ext_resource type="AudioStream" uid="uid://vanmdt5oitld" path="res://exports/sounds/steps_concrete/step3.mp3" id="4_mlsov"]
 [ext_resource type="AudioStream" uid="uid://djude0e6rkae5" path="res://exports/sounds/steps_concrete/step4.mp3" id="5_7fu05"]
 [ext_resource type="Script" path="res://scripts/grid_movement_component.gd" id="6_l13uc"]
-
-[sub_resource type="Animation" id="Animation_6pqf4"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("GridMovementComponent:blend_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera3D:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 1, 0.505)]
-}
-
-[sub_resource type="Animation" id="Animation_skpfj"]
-resource_name = "turn"
-length = 0.4
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("GridMovementComponent:blend_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.4)
-}
-
-[sub_resource type="Animation" id="Animation_oecr3"]
-resource_name = "walk"
-length = 0.4
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("GridMovementComponent:blend_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.1, 0.00190114, 1, -0.1, 0.00863743, 0.25, 0),
-"times": PackedFloat32Array(0, 0.4)
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera3D:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 1, 0.505), Vector3(0, 1.15, 0.505), Vector3(0, 1, 0.505)]
-}
-
-[sub_resource type="Animation" id="Animation_20uh2"]
-resource_name = "wallbump"
-length = 0.4
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("GridMovementComponent:blend_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.0460151, 0.00715737, 0.403, -0.0184061, -0.0041602, 0.135139, -0.0041602, 0, -0.0546443, 0.00715737, 0.25, 0),
-"times": PackedFloat32Array(0, 0.200045, 0.4)
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Camera3D:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 1, 0.505), Vector3(0, 1.15, 0.505), Vector3(0, 1, 0.505)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_rc1eq"]
-_data = {
-"RESET": SubResource("Animation_6pqf4"),
-"turn": SubResource("Animation_skpfj"),
-"walk": SubResource("Animation_oecr3"),
-"wallbump": SubResource("Animation_20uh2")
-}
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_hsjag"]
 streams_count = 4
@@ -130,7 +28,7 @@ fov = 70.8
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_rc1eq")
+"": ExtResource("2_7csy8")
 }
 speed_scale = 1.348
 

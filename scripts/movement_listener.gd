@@ -6,6 +6,7 @@ extends Component
 const MOVELISTENER_COMPONENT_NAME := &"MovementListenerComponent"
 
 @export var grid_bound: GridBoundComponent
+@export var is_an_obstacle: bool = true
 
 signal player_collision
 
@@ -23,6 +24,8 @@ func _notification(what):
 		var chr := get_tree().get_first_node_in_group(Globals.CHARACTER_GROUP) as CharacterController
 		var component := chr.get_component(GridMovementComponent.GM_COMPONENT_NAME)
 		component.remove_movement_listener(self)
+		if is_an_obstacle:
+			Obstacles.unregister_obstacle(grid_bound.grid_coordinate)
 
 func _ready():
 	# get the Character object and register in its movement listeners
@@ -30,6 +33,9 @@ func _ready():
 	# TODO:  implement movement listener array as a part of a system?
 	var component := chr.get_component(GridMovementComponent.GM_COMPONENT_NAME)
 	component.add_movement_listener(self)
+	await grid_bound.grid_coordinate_changed
+	if is_an_obstacle:
+		Obstacles.register_obstacle(grid_bound.grid_coordinate)
 
 func get_component_name() -> StringName:
 	return MOVELISTENER_COMPONENT_NAME
